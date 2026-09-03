@@ -1,4 +1,3 @@
-// Link da sua API do Google Apps Script configurado!
 const API_URL = "https://script.google.com/macros/s/AKfycbxuwa0ufXZzvq1X2_79Mn3WhyeSrhrgWqNl7cwNj3Co4TuJtBLwSy0uhOzkAOWoWag/exec";
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -35,12 +34,24 @@ document.addEventListener('DOMContentLoaded', () => {
         };
     }
 
-    // Busca os dados diretamente da Planilha do Google
     async function fetchNades() {
         cardsGrid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: #a8a8b3;">Carregando utilitários da planilha...</p>';
         try {
             const response = await fetch(API_URL);
-            nades = await response.json();
+            const rawData = await response.json();
+            
+            // Normaliza os dados para evitar undefined caso o nome da coluna mude
+            nades = rawData.map(item => {
+                return {
+                    title: item.title || item.Title || item["0"] || "Sem título",
+                    map: item.map || item.Map || item["1"] || "-",
+                    side: item.side || item.Side || item["2"] || "-",
+                    type: item.type || item.Type || item["3"] || "-",
+                    embedUrl: item.embedUrl || item.EmbedUrl || item["4"] || "",
+                    thumbnailUrl: item.thumbnailUrl || item.ThumbnailUrl || item["5"] || ""
+                };
+            });
+
             renderCards();
         } catch (error) {
             console.error('Erro ao buscar da planilha:', error);
@@ -86,7 +97,7 @@ document.addEventListener('DOMContentLoaded', () => {
             : nades.filter(nade => nade.map === filterMap);
 
         if (filteredNades.length === 0) {
-            cardsGrid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: #a8a8b3;">Nenhum utilitário encontrado nesta categoria.</p>';
+            cardsGrid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: #a8a8b3;">Nenhum utilitário encontrado.</p>';
             return;
         }
 
@@ -122,7 +133,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Salva o novo card enviando para a Planilha do Google
     nadeForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         
@@ -166,7 +176,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
             nadeForm.reset();
             
-            // Aguarda 1.5s para dar tempo do Google salvar e recarrega os dados da planilha
             setTimeout(() => {
                 fetchNades();
                 submitBtn.disabled = false;
@@ -201,6 +210,5 @@ document.addEventListener('DOMContentLoaded', () => {
         if (e.key === 'Escape' && modal.classList.contains('active')) closeModal();
     });
 
-    // Busca as nades salvas na planilha assim que o app carregar
     fetchNades();
 });
