@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CS2 Nades Lab</title>
+    <link rel="stylesheet" href="style.css">
+    <script type="text/javascript" src="./index.js" defer=""></script>
+    <link rel="stylesheet" href="./index.css">
+  </head>
+
+  <body>
+    <div class="container">
+      <aside class="sidebar">
+        <h2>CS2 Lab</h2>
+        <nav>
+          <button class="nav-btn active" data-filter="all">Todos</button>
+          <button class="nav-btn" data-filter="Mirage">Mirage</button>
+          <button class="nav-btn" data-filter="Inferno">Inferno</button>
+          <button class="nav-btn" data-filter="Dust II">Dust II</button>
+          <button class="nav-btn" data-filter="Nuke">Nuke</button>
+          <button class="nav-btn" data-filter="Ancient">Ancient</button>
+          <button class="nav-btn" data-filter="Anubis">Anubis</button>
+        </nav>
+      </aside>
+
+      <main class="main-content">
+        <header>
+          <h1>Cadastrar Utilitário</h1>
+          <form id="nadeForm" class="nade-form">
+            <input type="text" id="titleInput" placeholder="Posição (ex: Smoke Janela)" required="">
+
+            <select id="mapSelect" required="">
+              <option value="" disabled="" selected="">Mapa</option>
+              <option value="Mirage">Mirage</option>
+              <option value="Inferno">Inferno</option>
+              <option value="Dust II">Dust II</option>
+              <option value="Nuke">Nuke</option>
+              <option value="Ancient">Ancient</option>
+              <option value="Anubis">Anubis</option>
+            </select>
+
+            <select id="sideSelect" required="">
+              <option value="" disabled="" selected="">Lado</option>
+              <option value="TR">TR</option>
+              <option value="CT">CT</option>
+            </select>
+
+            <select id="typeSelect" required="">
+              <option value="" disabled="" selected="">Utilitário</option>
+              <option value="Smoke">Smoke</option>
+              <option value="Flashbang">Flashbang</option>
+              <option value="Molotov">Molotov</option>
+              <option value="Granada">Granada HE</option>
+            </select>
+
+            <input type="url" id="videoUrl" placeholder="URL do Vídeo (YouTube)" required="">
+            <button type="submit">Salvar Card</button>
+          </form>
+        </header>
+
+        <section class="cards-grid" id="cardsGrid">
+        </section>
+      </main>
+    </div>
+
+    <!-- Modal para exibição expandida do vídeo -->
+    <div id="videoModal" class="modal-overlay">
+      <div class="modal-content">
+        <span class="close-modal">×</span>
+        <div id="modalHeader" class="modal-header"></div>
+        <div class="video-container large-video">
+          <iframe id="modalIframe" src="" allowfullscreen=""></iframe>
+        </div>
+        <div id="modalDetails" class="modal-details"></div>
+      </div>
+    </div>
+
+    <script src="script.js"></script>
+
+  </body>
+
+</html>

@@ -1,0 +1,312 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: #121214;
+    color: #e1e1e6;
+}
+
+.container {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* Navbar Lateral */
+.sidebar {
+    width: 220px;
+    background-color: #1a1a1e;
+    padding: 20px;
+    border-right: 1px solid #29292e;
+}
+
+.sidebar h2 {
+    color: #00b37e;
+    margin-bottom: 24px;
+    text-align: center;
+}
+
+.sidebar nav {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.nav-btn {
+    background: transparent;
+    border: none;
+    color: #a8a8b3;
+    padding: 12px;
+    text-align: left;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 15px;
+    transition: all 0.2s;
+}
+
+.nav-btn:hover, .nav-btn.active {
+    background-color: #29292e;
+    color: #00b37e;
+    font-weight: bold;
+}
+
+/* Área Principal */
+.main-content {
+    flex: 1;
+    padding: 30px;
+}
+
+.nade-form {
+    display: flex;
+    gap: 12px;
+    margin: 20px 0 30px 0;
+    flex-wrap: wrap;
+}
+
+.nade-form select, .nade-form input {
+    padding: 12px;
+    background-color: #202024;
+    border: 1px solid #29292e;
+    border-radius: 6px;
+    color: #fff;
+    outline: none;
+}
+
+.nade-form input[type="text"] {
+    flex: 2;
+    min-width: 180px;
+}
+
+.nade-form input[type="url"] {
+    flex: 2;
+    min-width: 200px;
+}
+
+.nade-form button {
+    padding: 12px 20px;
+    background-color: #00b37e;
+    border: none;
+    border-radius: 6px;
+    color: #fff;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.nade-form button:hover {
+    background-color: #00875f;
+}
+
+/* Grid de Cards */
+.cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+}
+
+.card {
+    background-color: #202024;
+    border: 1px solid #29292e;
+    border-radius: 8px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    cursor: pointer;
+    transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.card:hover {
+    transform: translateY(-3px);
+    border-color: #00b37e;
+}
+
+.card-header {
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    background-color: #1a1a1e;
+}
+
+.card-title-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.card-title {
+    font-size: 16px;
+    font-weight: bold;
+    color: #fff;
+}
+
+.card-tags {
+    display: flex;
+    gap: 6px;
+}
+
+.badge {
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.badge-map { background-color: #29292e; color: #e1e1e6; }
+.badge-type { background-color: #00b37e; color: #121214; }
+.badge-tr { background-color: #de9b35; color: #121214; }
+.badge-ct { background-color: #4a82f6; color: #fff; }
+
+/* Capas de Vídeo (Thumbnails) nos Cards */
+.video-thumbnail-container {
+    position: relative;
+    width: 100%;
+    height: 160px;
+    background-color: #000;
+    overflow: hidden;
+}
+
+.card-thumbnail {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.video-thumbnail-container:hover .card-thumbnail {
+    transform: scale(1.05);
+    opacity: 0.8;
+}
+
+.play-button-overlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(0, 0, 0, 0.7);
+    color: #00b37e;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 20px;
+    transition: background-color 0.2s ease, transform 0.2s ease, color 0.2s ease;
+}
+
+.video-thumbnail-container:hover .play-button-overlay {
+    background-color: #00b37e;
+    color: #fff;
+    transform: translate(-50%, -50%) scale(1.1);
+}
+
+/* Container Genérico de Vídeo (Usado para a Proporção 16:9 no Modal) */
+.video-container {
+    position: relative;
+    padding-bottom: 56.25%;
+    height: 0;
+}
+
+.video-container iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+}
+
+.delete-btn {
+    background: transparent;
+    border: none;
+    color: #f75a68;
+    cursor: pointer;
+    padding: 10px;
+    text-align: right;
+    font-weight: bold;
+    transition: color 0.2s;
+}
+
+.delete-btn:hover {
+    color: #ff3344;
+}
+
+/* ESTILOS DO MODAL */
+
+.modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.85);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.modal-overlay.active {
+    display: flex;
+    opacity: 1;
+}
+
+.modal-content {
+    background-color: #1a1a1e;
+    border: 1px solid #29292e;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 800px;
+    max-height: 90vh;
+    position: relative;
+    overflow-y: auto;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    padding: 20px;
+}
+
+.close-modal {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 28px;
+    color: #a8a8b3;
+    cursor: pointer;
+    z-index: 1010;
+}
+
+.close-modal:hover {
+    color: #fff;
+}
+
+.large-video {
+    margin: 15px 0;
+}
+
+.modal-header, .modal-details {
+    margin-bottom: 10px;
+    color: #e1e1e6;
+}
+
+.modal-details {
+    margin-top: 15px;
+}
+
+.modal-details p {
+    margin-bottom: 5px;
+    font-size: 14px;
+}
+
+@media (max-width: 600px) {
+    .modal-content {
+        width: 100%;
+        padding: 10px;
+    }
+}
