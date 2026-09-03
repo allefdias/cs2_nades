@@ -38,20 +38,7 @@ document.addEventListener('DOMContentLoaded', () => {
         cardsGrid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: #a8a8b3;">Carregando utilitários da planilha...</p>';
         try {
             const response = await fetch(API_URL);
-            const rawData = await response.json();
-            
-            // Normaliza os dados para evitar undefined caso o nome da coluna mude
-            nades = rawData.map(item => {
-                return {
-                    title: item.title || item.Title || item["0"] || "Sem título",
-                    map: item.map || item.Map || item["1"] || "-",
-                    side: item.side || item.Side || item["2"] || "-",
-                    type: item.type || item.Type || item["3"] || "-",
-                    embedUrl: item.embedUrl || item.EmbedUrl || item["4"] || "",
-                    thumbnailUrl: item.thumbnailUrl || item.ThumbnailUrl || item["5"] || ""
-                };
-            });
-
+            nades = await response.json();
             renderCards();
         } catch (error) {
             console.error('Erro ao buscar da planilha:', error);
@@ -59,7 +46,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    function openModal(nade) {
+    function openModal(nade, e) {
+        if (e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
         modalIframe.src = `${nade.embedUrl}?autoplay=1`;
 
         const sideClass = nade.side === 'TR' ? 'badge-tr' : 'badge-ct';
@@ -126,9 +118,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
             `;
 
-            card.querySelector('.card-header').addEventListener('click', () => openModal(nade));
-            card.querySelector('.video-thumbnail-container').addEventListener('click', () => openModal(nade));
-
+            card.addEventListener('click', (e) => openModal(nade, e));
             cardsGrid.appendChild(card);
         });
     }
@@ -136,7 +126,7 @@ document.addEventListener('DOMContentLoaded', () => {
     nadeForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         
-        const submitBtn = nadeForm.querySelector('button[type="submit"]');
+        const submitBtn = document.getElementById('saveBtn');
         submitBtn.disabled = true;
         submitBtn.textContent = 'Salvando na nuvem...';
 
