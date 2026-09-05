@@ -5,44 +5,72 @@ document.addEventListener('DOMContentLoaded', () => {
     const cardsGrid = document.getElementById('cardsGrid');
     const filterBtns = document.querySelectorAll('.nav-btn');
 
+    // Elementos do Modal de Vídeo
     const modal = document.getElementById('videoModal');
     const modalIframe = document.getElementById('modalIframe');
     const modalHeader = document.getElementById('modalHeader');
     const modalDetails = document.getElementById('modalDetails');
-    const closeModalBtn = document.querySelector('.close-modal');
+    const closeModalBtn = document.querySelector('#videoModal .close-modal');
+
+    // Elementos do Modal de Avisos/Mensagens
+    const infoModal = document.getElementById('infoModal');
+    const infoIcon = document.getElementById('infoIcon');
+    const infoTitle = document.getElementById('infoTitle');
+    const infoMessage = document.getElementById('infoMessage');
+    const infoConfirmBtn = document.getElementById('infoConfirmBtn');
+    const closeInfoModalBtn = document.querySelector('#infoModal .close-info-modal');
 
     let nades = [];
+
+    // Exibe aviso inicial solicitando preferência por vídeos curtos
+    showNotice(
+        '💡',
+        'Boas-vindas ao CS2 Lab!',
+        'Para ajudar a comunidade com conteúdos objetivos, dê preferência a vídeos curtos (YouTube Shorts ou demonstrativos de poucos segundos).'
+    );
+
+    function showNotice(icon, title, message) {
+        if (!infoModal) return;
+        infoIcon.textContent = icon;
+        infoTitle.textContent = title;
+        infoMessage.textContent = message;
+        infoModal.classList.add('active');
+    }
+
+    function closeNotice() {
+        if (infoModal) infoModal.classList.remove('active');
+    }
 
     function getVideoData(url) {
         let videoId = '';
         if (url.includes('shorts/')) {
-            videoId = url.split('shorts/')[1].split('?')[0];
+            videoId = url.split('shorts/')[1].split('?')[0].split('&')[0];
         } else if (url.includes('youtu.be/')) {
-            videoId = url.split('youtu.be/')[1].split('?')[0];
+            videoId = url.split('youtu.be/')[1].split('?')[0].split('&')[0];
         } else if (url.includes('watch?v=')) {
             videoId = url.split('watch?v=')[1].split('&')[0];
         } else if (url.includes('embed/')) {
-            videoId = url.split('embed/')[1].split('?')[0];
+            videoId = url.split('embed/')[1].split('?')[0].split('&')[0];
         }
 
         if (!videoId) return null;
 
         return {
             videoId: videoId,
-            embedUrl: `https://www.youtube.com/embed/${videoId}`,
+            embedUrl: `https://www.youtube.com/embed/${videoId}?enablejsapi=1`,
             thumbnailUrl: `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`
         };
     }
 
     async function fetchNades() {
-        cardsGrid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: #a8a8b3;">Carregando utilitários da planilha...</p>';
+        cardsGrid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: #a8a8b3;">Carregando utilitários...</p>';
         try {
             const response = await fetch(API_URL);
             nades = await response.json();
             renderCards();
         } catch (error) {
             console.error('Erro ao buscar da planilha:', error);
-            cardsGrid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: #f75a68;">Erro ao carregar dados da planilha.</p>';
+            cardsGrid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: #f75a68;">Erro ao carregar os dados.</p>';
         }
     }
 
@@ -52,7 +80,7 @@ document.addEventListener('DOMContentLoaded', () => {
             e.stopPropagation();
         }
 
-        modalIframe.src = `${nade.embedUrl}?autoplay=1`;
+        modalIframe.src = `${nade.embedUrl}&autoplay=1`;
 
         const sideClass = nade.side === 'TR' ? 'badge-tr' : 'badge-ct';
 
@@ -128,7 +156,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         const submitBtn = document.getElementById('saveBtn');
         submitBtn.disabled = true;
-        submitBtn.textContent = 'Salvando na nuvem...';
+        submitBtn.textContent = 'Enviando...';
 
         const title = document.getElementById('titleInput').value;
         const map = document.getElementById('mapSelect').value;
@@ -164,17 +192,21 @@ document.addEventListener('DOMContentLoaded', () => {
                 body: JSON.stringify(newNade)
             });
 
+            // Reseta o formulário e restaura o botão
             nadeForm.reset();
-            
-            setTimeout(() => {
-                fetchNades();
-                submitBtn.disabled = false;
-                submitBtn.textContent = 'Salvar Card';
-            }, 1500);
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Salvar Card';
+
+            // Exibe o modal de confirmação sem refazer a busca na planilha
+            showNotice(
+                '🎉',
+                'Vídeo Enviado com Sucesso!',
+                'Muito obrigado por colaborar! Seu vídeo foi enviado para análise e será publicado após a aprovação da moderação.'
+            );
 
         } catch (error) {
-            console.error('Erro ao salvar na planilha:', error);
-            alert('Falha ao salvar na planilha online.');
+            console.error('Erro ao enviar vídeo:', error);
+            alert('Falha ao enviar o vídeo. Tente novamente.');
             submitBtn.disabled = false;
             submitBtn.textContent = 'Salvar Card';
         }
@@ -191,13 +223,21 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     closeModalBtn.addEventListener('click', closeModal);
-
     modal.addEventListener('click', (e) => {
         if (e.target === modal) closeModal();
     });
 
+    infoConfirmBtn.addEventListener('click', closeNotice);
+    closeInfoModalBtn.addEventListener('click', closeNotice);
+    infoModal.addEventListener('click', (e) => {
+        if (e.target === infoModal) closeNotice();
+    });
+
     document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && modal.classList.contains('active')) closeModal();
+        if (e.key === 'Escape') {
+            closeModal();
+            closeNotice();
+        }
     });
 
     fetchNades();
