@@ -310,3 +310,44 @@ body {
         padding: 10px;
     }
 }
+/* ESTILOS DO MODAL DE INFORMAÇÕES / AVISOS */
+
+.info-modal-content {
+    text-align: center;
+    max-width: 480px;
+    padding: 30px 24px;
+}
+
+.info-icon {
+    font-size: 48px;
+    margin-bottom: 12px;
+}
+
+.info-modal-content h2 {
+    color: #fff;
+    font-size: 22px;
+    margin-bottom: 12px;
+}
+
+.info-modal-content p {
+    color: #a8a8b3;
+    font-size: 15px;
+    line-height: 1.5;
+    margin-bottom: 24px;
+}
+
+.info-confirm-btn {
+    background-color: #00b37e;
+    color: #fff;
+    border: none;
+    padding: 12px 28px;
+    border-radius: 6px;
+    font-weight: bold;
+    font-size: 15px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.info-confirm-btn:hover {
+    background-color: #00875f;
+}
