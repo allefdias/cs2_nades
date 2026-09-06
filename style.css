@@ -351,3 +351,24 @@ body {
 .info-confirm-btn:hover {
     background-color: #00875f;
 }
+/* BARRA DE PESQUISA */
+.search-section {
+    margin-bottom: 24px;
+}
+
+.search-section input {
+    width: 100%;
+    padding: 14px 18px;
+    background-color: #202024;
+    border: 1px solid #29292e;
+    border-radius: 8px;
+    color: #fff;
+    font-size: 15px;
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.search-section input:focus {
+    border-color: #00b37e;
+    box-shadow: 0 0 0 2px rgba(0, 179, 126, 0.2);
+}
