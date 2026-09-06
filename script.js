@@ -4,6 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const nadeForm = document.getElementById('nadeForm');
     const cardsGrid = document.getElementById('cardsGrid');
     const filterBtns = document.querySelectorAll('.nav-btn');
+    const searchInput = document.getElementById('searchInput');
 
     // Elementos do Modal de Vídeo
     const modal = document.getElementById('videoModal');
@@ -21,6 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const closeInfoModalBtn = document.querySelector('#infoModal .close-info-modal');
 
     let nades = [];
+    let currentMapFilter = 'all';
 
     // Exibe aviso inicial solicitando preferência por vídeos curtos
     showNotice(
@@ -109,15 +111,27 @@ document.addEventListener('DOMContentLoaded', () => {
         modalIframe.src = '';
     }
 
-    function renderCards(filterMap = 'all') {
+    // Renderiza os cards combinando Filtro de Mapa e Busca por Texto
+    function renderCards() {
         cardsGrid.innerHTML = '';
+        const searchTerm = searchInput ? searchInput.value.toLowerCase().trim() : '';
 
-        const filteredNades = filterMap === 'all' 
-            ? nades 
-            : nades.filter(nade => nade.map === filterMap);
+        const filteredNades = nades.filter(nade => {
+            // Filtro por Mapa
+            const matchesMap = (currentMapFilter === 'all') || (nade.map === currentMapFilter);
+            
+            // Filtro por Pesquisa de Texto (Busca no Título, Mapa, Lado ou Tipo)
+            const matchesSearch = 
+                nade.title.toLowerCase().includes(searchTerm) ||
+                nade.map.toLowerCase().includes(searchTerm) ||
+                nade.side.toLowerCase().includes(searchTerm) ||
+                nade.type.toLowerCase().includes(searchTerm);
+
+            return matchesMap && matchesSearch;
+        });
 
         if (filteredNades.length === 0) {
-            cardsGrid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: #a8a8b3;">Nenhum utilitário encontrado.</p>';
+            cardsGrid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: #a8a8b3;">Nenhum utilitário encontrado com esses critérios.</p>';
             return;
         }
 
@@ -151,6 +165,12 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // Evento de digitação na busca
+    if (searchInput) {
+        searchInput.addEventListener('input', renderCards);
+    }
+
+    // Envio do Formulário
     nadeForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         
@@ -192,12 +212,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 body: JSON.stringify(newNade)
             });
 
-            // Reseta o formulário e restaura o botão
             nadeForm.reset();
             submitBtn.disabled = false;
             submitBtn.textContent = 'Salvar Card';
 
-            // Exibe o modal de confirmação sem refazer a busca na planilha
             showNotice(
                 '🎉',
                 'Vídeo Enviado com Sucesso!',
@@ -212,13 +230,14 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    // Evento de troca de mapa nas categorias
     filterBtns.forEach(btn => {
         btn.addEventListener('click', (e) => {
             filterBtns.forEach(b => b.classList.remove('active'));
             e.target.classList.add('active');
             
-            const filter = e.target.getAttribute('data-filter');
-            renderCards(filter);
+            currentMapFilter = e.target.getAttribute('data-filter');
+            renderCards();
         });
     });
 
